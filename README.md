@@ -24,3 +24,6 @@ docker compose up -d
 # 3. Verificar que está sano
 docker compose ps
 docker compose exec db pg_isready -U library -d library
+```
+
+Para detenerlo: `docker compose down` (conserva los datos). Para borrar también el volumen: `docker compose down -v`.
