@@ -1,0 +1,35 @@
+# Manager Library — Infraestructura
+# Motor de base de datos vacío + red + volúmenes.
+# El esquema (tablas, índices, restricciones) lo crean las migraciones de la API (Laravel).
+# Ver: constitution.md Artículo V y ADR-001.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: manager-library-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-library}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-library}
+      POSTGRES_DB: ${POSTGRES_DB:-library}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - manager-library
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-library} -d ${POSTGRES_DB:-library}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+networks:
+  manager-library:
+    driver: bridge
+    name: manager-library
+
+volumes:
+  postgres_data:
+    name: manager-library-postgres
